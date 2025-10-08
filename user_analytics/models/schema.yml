@@ -1,0 +1,44 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: USER_ACTIVITY_DB
+    schema: RAW_DATA
+    tables:
+      - name: posts
+        description: "Raw posts data fetched from the JSONPlaceholder API."
+      - name: comments
+        description: "Raw comments data fetched from the API, linked to posts."
+
+
+models:
+  - name: stg_posts
+    description: "Post Stage"
+    columns:
+      - name: post_id
+        description: "The primary key for posts"
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_comments
+    description: "Comment Stage"
+    columns:
+      - name: comment_id
+        description: "The primary key for comments"
+        data_tests:
+          - unique
+          - not_null
+      - name: post_id
+        tests:
+          - relationships:
+              to: ref('stg_posts')
+              field: post_id
+
+  - name: dim_users
+    columns:
+      - name: user_id
+        description: "The primary keys for users"
+        data_tests:
+          - unique
+          - not_null
